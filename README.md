@@ -21,7 +21,7 @@ O endereço usado em `RESEND_FROM_EMAIL` precisa estar autorizado no Resend. O d
 
 ## Limites de upload
 
-A função aceita imagens JPG, PNG, WEBP e GIF. Cada arquivo pode ter até 5 MB e o total de anexos pode ter até 8 MB. Os arquivos são mantidos no navegador até o envio e chegam como anexos no e-mail.
+A função aceita imagens JPG, PNG, WEBP e GIF. Cada arquivo pode ter até 2 MB e o total de anexos pode ter até 3 MB, considerando a codificação base64 usada no request. Os arquivos são mantidos no navegador até o envio e chegam como anexos reais no e-mail. O envio só é liberado quando os dados de contato, tamanho, cores desejadas, cores indesejadas, referências ou imagens e prazo estiverem respondidos.
 
 ## Estrutura
 
