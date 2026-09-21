@@ -4,6 +4,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 const MAX_TOTAL_BYTES = 3 * 1024 * 1024;
 const MAX_FILE_BYTES = 2 * 1024 * 1024;
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+const ALLOWED_SOURCES = new Set(["Indicação", "Instagram", "TikTok", "Site", "Outro"]);
 
 function cleanName(value: unknown) {
   return String(value ?? "").trim().replace(/[\r\n]/g, " ").slice(0, 120) || "Cliente";
@@ -33,7 +34,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const links = Array.isArray(answers.links) ? answers.links : [];
     const files = Array.isArray(answers.files) ? answers.files : [];
     const missing: string[] = [];
-    if (!hasValue(answers.name) || !hasValue(answers.phone) || !hasValue(answers.source)) missing.push("dados de contato");
+    if (!hasValue(answers.name) || String(answers.phone ?? "").replace(/\D/g, "").length !== 11 || !ALLOWED_SOURCES.has(String(answers.source ?? ""))) missing.push("dados de contato válidos");
     if (!hasValue(answers.size)) missing.push("tamanho");
     if (!desiredColors.length && !desiredCustomColors.length) missing.push("cores desejadas");
     if (!unwantedColors.length && !unwantedCustomColors.length) missing.push("cores indesejadas");
@@ -53,7 +54,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!ALLOWED_TYPES.has(contentType) || bytes > MAX_FILE_BYTES) throw new Error("Cada anexo deve ser uma imagem JPG, PNG, WEBP ou GIF de até 2 MB.");
       return { filename, content, contentType };
     });
-    if (totalBytes > MAX_TOTAL_BYTES) return res.status(413).json({ error: "O tamanho total dos anexos ultrapassa 8 MB." });
+    if (totalBytes > MAX_TOTAL_BYTES) return res.status(413).json({ error: "O tamanho total dos anexos ultrapassa 3 MB." });
 
     const replyTo = String(answers.email ?? "").trim();
     const email = {
