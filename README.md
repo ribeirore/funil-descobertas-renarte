@@ -29,3 +29,5 @@ A função aceita imagens JPG, PNG, WEBP e GIF. Cada arquivo pode ter até 2 MB 
 - `App.tsx`: versão React com hooks, Tailwind CSS e Lucide React.
 - `api/send-briefing.ts`: função serverless de envio pelo Resend.
 - `Logo-Renarte-SemFundo.png`: logo usada no cabeçalho e na marca d’água.
+
+Deploy configurado no Cloudflare Pages.
