@@ -21,6 +21,16 @@ function hasValue(value: unknown) {
   return String(value ?? "").trim().length > 0;
 }
 
+function validDeadline(value: unknown) {
+  const text = String(value ?? "");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return false;
+  const [year, month, day] = text.split("-").map(Number);
+  const candidate = new Date(year, month - 1, day);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return year >= 1000 && candidate.getFullYear() === year && candidate.getMonth() === month - 1 && candidate.getDate() === day && candidate >= today;
+}
+
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -53,7 +63,7 @@ export const onRequestPost = async ({ request, env }: PagesContext) => {
     if (!desiredColors.length && !desiredCustomColors.length) missing.push("cores desejadas");
     if (!unwantedColors.length && !unwantedCustomColors.length) missing.push("cores indesejadas");
     if (!links.some(hasValue) && !files.length) missing.push("referências ou imagens");
-    if (!hasValue(answers.hasDeadline) || (answers.hasDeadline === "Sim" && !hasValue(answers.deadlineDate))) missing.push("prazo");
+    if (!hasValue(answers.hasDeadline) || (answers.hasDeadline === "Sim" && !validDeadline(answers.deadlineDate))) missing.push("prazo");
     if (!summary || missing.length) return json({ error: `Complete todas as respostas antes de enviar: ${missing.join(", ") || "resumo"}.` }, 400);
 
     let totalBytes = 0;
